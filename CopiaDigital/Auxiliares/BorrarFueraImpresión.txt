@@ -1,0 +1,41 @@
+'Elimina el contenido de las celdas fuera del área de impresión
+Public Sub LimpiarImpresion()
+
+Dim PrintRange As Range
+Dim Range_Top As Integer
+Dim Range_Left As Integer
+Dim Range_Bottom As Integer
+Dim Range_Right As Integer
+
+ScreenUpdating = False
+
+Set PrintRange = Range(ActiveSheet.PageSetup.PrintArea)
+
+Range_Top = PrintRange.Row
+Range_Left = PrintRange.Column
+Range_Bottom = PrintRange.Rows(PrintRange.Rows.Count).Row
+Range_Right = PrintRange.Columns(PrintRange.Columns.Count).Column
+
+'delete from the bottom row down first.
+If Range_Bottom < 65535 Then
+ActiveSheet.Range(Range_Bottom + 1 & ":65536").Delete
+End If
+
+'delete from the top row up.
+If Range_Top > 1 Then
+ActiveSheet.Range("1:" & Range_Top - 1).Delete
+End If
+
+'delete from the right hand side next.
+If Range_Right < 255 Then
+ActiveSheet.Range(ActiveSheet.Columns(Range_Right + 1), ActiveSheet.Columns(256)).Delete
+End If
+
+'lastly delete from the left hand side.
+If Range_Left > 1 Then
+ActiveSheet.Range(ActiveSheet.Columns(Range_Left - 1), ActiveSheet.Columns(1)).Delete
+End If
+
+ScreenUpdating = True
+
+End Sub

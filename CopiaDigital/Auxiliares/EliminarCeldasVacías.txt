@@ -1,0 +1,9 @@
+'Elimina filas o columnas vacías
+Sub deletehidden()
+For lp = 256 To 1 Step -1
+If Columns(lp).EntireColumn.Hidden = True Then Columns(lp).EntireColumn.Delete Else
+Next
+For lp = 65536 To 1 Step -1
+If Rows(lp).EntireRow.Hidden = True Then Rows(lp).EntireRow.Delete Else
+Next
+End Sub

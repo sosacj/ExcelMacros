@@ -1,0 +1,34 @@
+'Ejecuta Buscar Objetivo en un rango de celdas
+Sub BuscarObjetivo()
+
+Dim CeldaInicio As Integer
+Dim CeldaFin As Integer
+
+'Celda a Definir
+Set CeldaDefinir = Application.InputBox(prompt:="Definir la celda:", Type:=8)
+CeldaInicio = CeldaDefinir.Row
+
+'Celda Objetivo
+Set CeldaObjetivo = Application.InputBox(prompt:="Con el valor:", Type:=8)
+
+'Celda a Modificar
+Set CeldaModificar = Application.InputBox(prompt:="Para cambiar la celda:", Type:=8)
+
+'Celda Final
+Set CeldaFinal = Application.InputBox(prompt:="Última fila a iterar:", Type:=8)
+CeldaFin = CeldaFinal.Row
+
+Dim CeldaActual As Integer
+CeldaActual = CeldaInicio
+
+'Iterar desde la celda inicio hasta la última inclusive
+Do While CeldaActual <= CeldaFin
+    
+    'Buscar Objetivo
+    Range(Chr(CeldaDefinir.Column + 64) & CeldaActual).GoalSeek Goal:=Range(Chr(CeldaObjetivo.Column + 64) & CeldaActual), ChangingCell:=Range(Chr(CeldaModificar.Column + 64) & CeldaActual)
+    
+    'Ir a la celda siguiente
+    CeldaActual = CeldaActual + 1
+Loop
+
+End Sub

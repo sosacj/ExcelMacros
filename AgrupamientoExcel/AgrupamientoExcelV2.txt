@@ -1,0 +1,37 @@
+Sub AgruparItems()
+    Dim cl As Range, MySel As Range, rng As Range, LastColumn As String, FirstRow As Integer, LastRow As Integer
+    
+    FirstRow = "6"
+    LastRow = "1185"
+    LastColumn = "G"
+    LastColumnAscii = Asc(LastColumn)
+    FirstColumnAscii = Asc("A") + 1
+    
+    For i = LastColumnAscii To FirstColumnAscii Step -1
+        CurrentColumn = Chr(i)
+        Set rng = Range(CurrentColumn & FirstRow & ":" & CurrentColumn & LastRow)
+        For Each cl In rng
+            If (MySel Is Nothing) Then
+                If Not IsEmpty(cl) Then
+                    Set MySel = cl
+                    cl.Offset(0, (LastColumnAscii - i + 3)).Value = "        " & cl.Offset(0, (LastColumnAscii - i + 3)).Value
+                End If
+            Else
+                If IsEmpty(cl) Then
+                    MySel.Rows.Group
+                    MySel.Rows.Hidden = True
+                    Set MySel = Nothing
+                Else
+                    cl.Offset(0, (LastColumnAscii - i + 3)).Value = "        " & cl.Offset(0, (LastColumnAscii - i + 3)).Value
+                    Set MySel = Union(MySel, cl)
+                End If
+            End If
+        Next
+    Next i
+    
+    Set rng = Range("A" & FirstRow & ":A" & LastRow)
+    rng.Rows.Group
+    rng.Rows.Hidden = False
+    
+End Sub
+

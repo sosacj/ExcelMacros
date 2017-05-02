@@ -1,0 +1,18 @@
+'Settea el zoom al x% en todas las hojas
+Sub Zoom()
+    Dim i
+    Dim Current As Worksheet
+ 
+    Set Current = ActiveSheet
+	
+	'Iteración por todas las hojas
+    For i = 1 To ThisWorkbook.Sheets.Count
+        Sheets(i).Activate
+		
+		'Settea el zoom al x% en la hoja actual
+        ActiveWindow.Zoom = 80
+    Next
+ 
+	'Vuelve a la hoja original
+    Current.Select
+End Sub

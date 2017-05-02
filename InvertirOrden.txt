@@ -1,0 +1,16 @@
+'Invierte el órden en que se encuentran las hojas
+Sub ReverseSheets()
+	
+	'Cantidad de hojas en el libro
+	Dim xCount As Integer
+	xCount = Application.ActiveWorkbook.Worksheets.Count
+	
+	'Iteración por todas las hojas
+	For i = 1 To xCount - 1
+		
+		'Reposicionamiento
+		Application.Worksheets(1).Move After:=Application.Worksheets(xCount - i + 1)
+		
+	Next
+	
+End Sub

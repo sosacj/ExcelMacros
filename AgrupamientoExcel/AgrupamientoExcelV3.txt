@@ -1,0 +1,86 @@
+'Agrupa filas de una planilla de cotización en función de sus códigos. En prin-
+'cipio hace falta separar cada código en columnas e identificar:
+'FirstRow: Primera fila a agrupar
+'LastRow: Última fila a agrupar
+'LastColumn: Columna donde se encuentra el código de mayor nivel de anidación
+'Off: Cantidad de columnas entre LastColumn y la columna de descripción. Este
+'parámetro se usa para indentar las descripciones de cada ítem según su nivel de
+'anidación
+Sub AgruparItems()
+    Dim cl As Range, MySel As Range, rng As Range, LastColumn As String, FirstRow As Integer, LastRow As Integer, Offset As Integer, Off As Integer
+    
+	'Parámetros de entrada
+    FirstRow = "6"
+    LastRow = "1516"
+    LastColumn = "G"
+    Off = 3
+	
+	'Transformación de letras en su código ASCII correspondiente
+    LastColumnAscii = Asc(LastColumn)
+    FirstColumnAscii = Asc("A") + 1
+    
+    'Rango de filas con las descripciones de cada ítem
+    Range(Chr(LastColumnAscii + Off) & "1:" & Chr(LastColumnAscii + Off) & LastRow).Select
+	
+	'Reemplaza todos los conjunto sde 8 caracteres en la columna descripción,
+	'para después indentar correctamente cada fila según su nivel de anidación
+    Selection.Replace What:="        ", Replacement:="", LookAt:=xlPart, _
+        SearchOrder:=xlByRows, MatchCase:=False
+    
+	'Iteración por todas las columnas desde el mayor nivel de anidación hasta
+	'el nivel 0. Este último debería ser el ítem de la obra completa
+    For i = LastColumnAscii To FirstColumnAscii Step -1
+		
+		'Columna i-ésima
+        CurrentColumn = Chr(i)
+		
+		'Iteración por todas las filas
+        Set rng = Range(CurrentColumn & FirstRow & ":" & CurrentColumn & LastRow)
+        For Each cl In rng
+			
+			'Número de columnas entre la columna que se está iterando y la co-
+			'lumna que contiene la descripción del ítem
+            Offset = (LastColumnAscii - i + Off)
+			
+			'Si la selección está vacía,
+            If (MySel Is Nothing) Then
+				
+				'Si además de estar vacía la selección, la celda tiene algún va-
+				'lor no nulo, se la añade a la selección
+                If Not IsEmpty(cl) Then
+                    Set MySel = cl
+					'Se indenta la descripción del ítem
+                    cl.Offset(0, Offset).Value = "        " & cl.Offset(0, Offset).Value
+                End If
+            Else
+				'Si la selección no estaba vacía y sí lo está la celda actual
+                If IsEmpty(cl) Then
+					'Agrupar las celdas contenidas en la selección
+                    MySel.Rows.Group
+					
+					'Ocultar las celdas agrupadas
+                    MySel.Rows.Hidden = True
+					
+					'Resettear la selección
+                    Set MySel = Nothing
+                Else
+					'Se indenta la descripción del ítem
+                    cl.Offset(0, Offset).Value = "        " & cl.Offset(0, Offset).Value
+                    
+					'Se añade a la selección, la celda actual
+					Set MySel = Union(MySel, cl)
+                End If
+            End If
+        Next
+    Next i
+    
+	'Se selecciona el nivel 0, que debería coincidir con la obra completa
+    Set rng = Range("A" & FirstRow & ":A" & LastRow)
+	
+	'Se agrupa la selección
+    rng.Rows.Group
+	
+	'Se ocultan todas las filas de la obra
+    rng.Rows.Hidden = False
+    
+End Sub

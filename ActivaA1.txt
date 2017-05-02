@@ -1,0 +1,17 @@
+'A1 activa en todas las hojas
+Sub SelectA1() 
+    
+    Dim ws As Worksheet 
+    
+	'Iteración por todas las hojas
+    For Each ws In ActiveWorkbook.Sheets 
+        ws.Activate 
+        ws.[a1].Select 
+    Next ws 
+	
+	'Se selecciona la primera hoja del libro
+    ActiveWorkbook.Worksheets(1).Activate 
+     
+End Sub 
+
+'THANKS PAST CHRISTIAN!!!!!!!!!!!!!!!!

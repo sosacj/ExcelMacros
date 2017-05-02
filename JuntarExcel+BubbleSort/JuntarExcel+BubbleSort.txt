@@ -1,0 +1,77 @@
+'Copia al libro actual todas las hojas contenidas en un conjunto de archivos
+'xls guardados en Path
+Sub GetSheets()
+	'Ubicación de los archivos xls a juntar
+	Path = "C:\Users\csosa\Documents\Presupuestos\2582 Monumento\Tercera Iteración\exp\"
+	
+	'Evita que se pida confirmación cada vez que se copia una hoja
+	Application.DisplayAlerts = False
+	
+	'Obtiene los nombres de cada archivo
+	Filename = Dir(Path & "*.xls")
+	
+	'Iteración sobre todos los nombres de archivos
+	Do While Filename <> ""
+		
+		'Apertura de cada archivo
+		Workbooks.Open Filename:=Path & Filename, ReadOnly:=True
+		
+		'Copia de cada hoja
+		For Each Sheet In ActiveWorkbook.Sheets
+			Sheet.Copy After:=ThisWorkbook.Sheets(1)
+		Next Sheet
+			'Cierre del archivo
+			Workbooks(Filename)Close
+		
+		'Archivo siguiente
+		Filename = Dir()
+	Loop
+	
+	'Restablece las alertas
+	Application.DisplayAlerts = True
+End Sub
+
+
+'Ordenamiento de hojas por burbujeo.
+'Funciona bastante rápido (en comparación
+'con otros scripts de ordenamiento) porque primero ordena los nombres de las
+'hojas y luego las reposiciona, en lugar de hacer todo en un mismo paso.
+Sub SortSheets()
+    Dim I As Integer
+    Dim sMySheets() As String
+    Dim iNumSheets As Integer
+
+    iNumSheets = Sheets.Count
+    Redim sMySheets(1 To iNumSheets)
+
+    For I = 1 To iNumSheets
+        sMySheets(I) = Sheets(I).Name
+    Next I
+
+    BubbleSort sMySheets
+
+    For I = 1 To iNumSheets
+        Sheets(sMySheets(I)).Move Before:=Sheets(I)
+    Next I
+End Sub
+Sub BubbleSort(sToSort() As String)
+    Dim Lower As Integer, Upper As Integer
+    Dim I As Integer, J As Integer, K As Integer
+    Dim Temp As String
+
+    Lower = LBound(sToSort)
+    Upper = UBound(sToSort)
+    For I = Lower To Upper - 1
+        K = I
+        For J = I + 1 To Upper
+            If sToSort(K) > sToSort(J) Then
+                K = J
+            End If
+        Next J
+        If I <> K Then
+            Temp = sToSort(I)
+            sToSort(I) = sToSort(K)
+            sToSort(K) = Temp
+        End If
+    Next I
+End Sub

@@ -1,0 +1,11 @@
+'Pegar Valores
+Sub Test()
+    Dim Sh As Worksheet
+    For Each Sh In ThisWorkbook.Worksheets
+		Sh.Activate
+		Sh.Cells.Copy
+		Sh.Range("A1").PasteSpecial Paste:=xlValues
+		Sh.Range("A1").Select
+    Next Sh
+    Application.CutCopyMode = False
+End Sub

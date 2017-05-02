@@ -1,0 +1,24 @@
+'Ejecuta Buscar Objetivo en un rango de celdas
+Sub BuscarObjetivo()
+
+Dim CeldaInicio As Integer
+Dim CeldaFin As Integer
+
+'Primera celda en que se debe realizar el buscar objetivo
+CeldaInicio = 17
+
+'Última celda en que se debe realizar el buscar objetivo
+CeldaFin = 30
+
+Dim CeldaActual As Integer
+CeldaActual = CeldaInicio
+
+'Iterar desde la celda inicio hasta la última inclusive
+Do While CeldaActual <= CeldaFin
+    'Buscar Objetivo
+    Range("T" & CeldaActual).GoalSeek Goal:=Range("Y" & CeldaActual).Value, ChangingCell:=Range("R" & CeldaActual)
+    'Ir a la celda siguiente
+    CeldaActual = CeldaActual + 1
+Loop
+
+End Sub

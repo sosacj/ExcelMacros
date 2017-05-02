@@ -1,0 +1,18 @@
+'Elimina hojas de un libro según el valor de una de sus celdas
+Sub EliminarVacíos()
+
+	'Evita que se pida una confirmación cada vez que se elimina una hoja
+    Application.DisplayAlerts=FALSE
+	
+	'Iteración por todas las hojas
+    For Each Sheet In ActiveWorkbook.Sheets
+		
+		'Condición para eliminiar la hoja
+        If Sheet.Cells(6, 6).Value = "0" Then
+            Sheet.Delete
+        End If
+    Next
+	
+	'Restablece las alertas
+	Application.DisplayAlerts=TRUE
+End Sub
