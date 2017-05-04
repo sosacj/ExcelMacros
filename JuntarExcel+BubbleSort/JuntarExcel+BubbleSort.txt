@@ -1,34 +1,36 @@
 'Copia al libro actual todas las hojas contenidas en un conjunto de archivos
 'xls guardados en Path
 Sub GetSheets()
-	'Ubicación de los archivos xls a juntar
-	Path = "C:\Users\csosa\Documents\Presupuestos\2582 Monumento\Tercera Iteración\exp\"
-	
-	'Evita que se pida confirmación cada vez que se copia una hoja
-	Application.DisplayAlerts = False
-	
-	'Obtiene los nombres de cada archivo
-	Filename = Dir(Path & "*.xls")
-	
-	'Iteración sobre todos los nombres de archivos
-	Do While Filename <> ""
-		
-		'Apertura de cada archivo
-		Workbooks.Open Filename:=Path & Filename, ReadOnly:=True
-		
-		'Copia de cada hoja
-		For Each Sheet In ActiveWorkbook.Sheets
-			Sheet.Copy After:=ThisWorkbook.Sheets(1)
-		Next Sheet
-			'Cierre del archivo
-			Workbooks(Filename)Close
-		
-		'Archivo siguiente
-		Filename = Dir()
-	Loop
-	
-	'Restablece las alertas
-	Application.DisplayAlerts = True
+    'Ubicación de los archivos xls a juntar
+    Path = GetFolder("Buscar carpeta") & "\"
+    
+    MsgBox Path
+    
+    'Evita que se pida confirmación cada vez que se copia una hoja
+    Application.DisplayAlerts = False
+    
+    'Obtiene los nombres de cada archivo
+    Filename = Dir(Path & "*.xls")
+    
+    'Iteración sobre todos los nombres de archivos
+    Do While Filename <> ""
+        
+        'Apertura de cada archivo
+        Workbooks.Open Filename:=Path & Filename, ReadOnly:=True
+        
+        'Copia de cada hoja
+        For Each Sheet In ActiveWorkbook.Sheets
+            Sheet.Copy After:=ThisWorkbook.Sheets(1)
+        Next Sheet
+            'Cierre del archivo
+            Workbooks(Filename).Close
+        
+        'Archivo siguiente
+        Filename = Dir()
+    Loop
+    
+    'Restablece las alertas
+    Application.DisplayAlerts = True
 End Sub
 
 
@@ -42,7 +44,7 @@ Sub SortSheets()
     Dim iNumSheets As Integer
 
     iNumSheets = Sheets.Count
-    Redim sMySheets(1 To iNumSheets)
+    ReDim sMySheets(1 To iNumSheets)
 
     For I = 1 To iNumSheets
         sMySheets(I) = Sheets(I).Name
@@ -75,3 +77,19 @@ Sub BubbleSort(sToSort() As String)
         End If
     Next I
 End Sub
+
+Function GetFolder(strPath As String) As String
+    Dim fldr As FileDialog
+    Dim sItem As String
+    Set fldr = Application.FileDialog(msoFileDialogFolderPicker)
+    With fldr
+        .Title = "Select a Folder"
+        .AllowMultiSelect = False
+        .InitialFileName = strPath
+        If .Show <> -1 Then GoTo NextCode
+        sItem = .SelectedItems(1)
+    End With
+NextCode:
+    GetFolder = sItem
+    Set fldr = Nothing
+End Function
