@@ -79,7 +79,7 @@ Sub AgruparItems()
     FirstRow = PrimeraFila + 1
     LastRow = Rango.Row + Rango.Rows.Count
     LastColumn = Chr(Rango.Column + 64)
-    Off = 2
+    Off = 1
     
     'Transformación de letras en su código ASCII correspondiente
     LastColumnAscii = Asc(LastColumn)
@@ -116,7 +116,7 @@ Sub AgruparItems()
                 If Not IsEmpty(cl) Then
                     Set MySel = cl
                     'Se indenta la descripción del ítem
-                    cl.Offset(0, Offset).Value = "    " & cl.Offset(0, Offset).Value
+                    cl.Offset(0, Offset).IndentLevel = cl.Offset(0, Offset).IndentLevel + 2
                 End If
             Else
                 'Si la selección no estaba vacía y sí lo está la celda actual
@@ -134,7 +134,7 @@ Sub AgruparItems()
                     Set MySel = Nothing
                 Else
                     'Se indenta la descripción del ítem
-                    cl.Offset(0, Offset).Value = "    " & cl.Offset(0, Offset).Value
+                    cl.Offset(0, Offset).IndentLevel = cl.Offset(0, Offset).IndentLevel + 2
                     
                     'Se añade a la selección, la celda actual
                     Set MySel = Union(MySel, cl)
