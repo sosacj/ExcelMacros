@@ -1,10 +1,8 @@
-'Agrupa filas de una planilla de cotización en función de sus códigos. En prin-
-'cipio hace falta separar cada código en columnas e identificar:
-'FirstRow: Primera fila a agrupar
-'LastRow: Última fila a agrupar
-'LastColumn: Columna donde se encuentra el código de mayor nivel de anidación
-'parámetro se usa para indentar las descripciones de cada ítem según su nivel de
-'anidación
+'Agrupa filas de una planilla de cotización en función de su nivel de indenta-
+'ción. Esta indentación surge de la carga realizada previamente en el CONN.
+'Por lo tanto, la salida y el costeo tienen exactamente la misma agrupación.
+'El rango a seleccionar es la columna de "Descripción" sin incluir el título.
+
 Sub AgruparItems()
 
     'Configurar visualización del agrupamiento
