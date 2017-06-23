@@ -1,0 +1,108 @@
+'Realiza la copia digital en todas las hojas de un libro
+Sub CopiaDigital()
+
+
+    ScreenUpdating = False
+
+    'Pegar Valores
+    Dim Sh As Worksheet
+    For Each Sh In ThisWorkbook.Worksheets
+        Sh.Activate
+        Sh.Cells.Copy
+        Sh.Range("A1").PasteSpecial Paste:=xlValues
+        Sh.Range("A1").Select
+    Next Sh
+    
+    'Misc
+    Application.CutCopyMode = False
+
+    Dim PrintRange As Range
+    Dim Range_Top As Integer
+    Dim Range_Left As Integer
+    Dim Range_Bottom As Integer
+    Dim Range_Right As Integer
+
+    'Iterar por todas las hojas
+    For Each Sh In ThisWorkbook.Worksheets
+
+        'Activar hoja
+        Sh.Activate
+    
+        'Eliminar objetos
+        'ActiveSheet.DrawingObjects.Select
+        'Selection.Delete
+    
+        'Borrar Columnas vacías
+        For lp = 256 To 1 Step -1
+            If Columns(lp).EntireColumn.Hidden = True Then Columns(lp).EntireColumn.Delete Else
+        Next
+        
+        'Borrar Filas vacías
+        For lp = 65536 To 1 Step -1
+            If Rows(lp).EntireRow.Hidden = True Then Rows(lp).EntireRow.Delete Else
+        Next
+    
+        'Si no está definida el área de impresión, se elimina la hoja completa
+        If ActiveSheet.PageSetup.PrintArea = "" Then
+            ActiveSheet.Delete
+        Else
+            Set PrintRange = Range(ActiveSheet.PageSetup.PrintArea)
+
+            Range_Top = PrintRange.Row
+            Range_Left = PrintRange.Column
+            Range_Bottom = PrintRange.Rows(PrintRange.Rows.Count).Row
+            Range_Right = PrintRange.Columns(PrintRange.Columns.Count).Column
+
+            'Eliminar filas abajo
+            If Range_Bottom < 65535 Then
+                ActiveSheet.Range(Range_Bottom + 1 & ":65536").Delete
+            End If
+
+            'Eliminar filas arriba
+            If Range_Top > 1 Then
+                ActiveSheet.Range("1:" & Range_Top - 1).Delete
+            End If
+
+            'Eliminar columnas a la derecha
+            If Range_Right < 255 Then
+                ActiveSheet.Range(ActiveSheet.Columns(Range_Right + 1), ActiveSheet.Columns(256)).Delete
+            End If
+
+            'Eliminar columnas a la izquierda
+            If Range_Left > 1 Then
+                ActiveSheet.Range(ActiveSheet.Columns(Range_Left - 1), ActiveSheet.Columns(1)).Delete
+            End If
+            
+        End If
+    Next Sh
+    
+    'Misc
+    ScreenUpdating = True
+
+End Sub
+
+'Realiza la copia digital en todas las hojas de un libro
+Sub CopiaDigital2()
+
+
+    ScreenUpdating = False
+
+    'Pegar Valores
+    Dim Sh As Worksheet
+
+    'Iterar por todas las hojas
+    For Each Sh In ThisWorkbook.Worksheets
+
+        'Activar hoja
+        Sh.Activate
+    
+        'Eliminar objetos
+        ActiveSheet.DrawingObjects.Select
+        Selection.Delete
+    
+    Next Sh
+    
+    'Misc
+    ScreenUpdating = True
+
+End Sub

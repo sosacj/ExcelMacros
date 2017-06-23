@@ -1,0 +1,18 @@
+Sub PasteNotLocked()
+'
+' PasteNotLocked Macro
+'
+' Acceso directo: CTRL+l
+'
+
+' Pega valores solo si la celda no está protegida
+    Dim i As Integer
+' Itera sobre todas las celdas con análisis
+    For i = 1 To 1209
+        If Not ActiveCell.Locked Then
+            ActiveSheet.Paste
+        End If
+    
+        ActiveCell.Offset(1, 0).Range("A1").Select
+    Next i
+End Sub

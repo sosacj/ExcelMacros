@@ -1,0 +1,211 @@
+'Main loop
+Sub ConsolidarLibro()
+
+    'Juntar varios archivos Excel en una misma hoja
+    GetSheets
+        
+    'Elimina las hojas con los datos parciales (las que no son "Total")
+    EliminarHojas
+    
+    'Pega valores en todas las celdas
+    PegarValores
+    
+    'Elimina columnas sobrantes marcadas en rojo
+    EliminarColumnas
+    
+    'Elimina filas según una fecha de cierre especificada por el usuario
+    EliminarFilas
+    
+End Sub
+
+'Copia al libro actual todas las hojas contenidas en un conjunto de archivos
+'xls guardados en Path
+Sub GetSheets()
+    
+    'Ubicación de los archivos xls a juntar
+    Path = GetFolder("Buscar carpeta") & "\"
+        
+    'Evita que se pida confirmación cada vez que se copia una hoja
+    Application.DisplayAlerts = False
+    
+    'Obtiene los nombres de cada archivo
+    Filename = Dir(Path & "*.xls")
+    
+    'Elimina los datos actuales de la primera hoja
+    ThisWorkbook.Sheets(1).UsedRange.Offset(1, 0).Clear
+    
+    'Iteración sobre todos los nombres de archivos
+    Do While Filename <> ""
+        
+        'Apertura de cada archivo
+        Workbooks.Open Filename:=Path & Filename, ReadOnly:=True
+        
+        'Inicialización de Variables
+        Dim OK As Boolean
+        Dim k1 As Long, k2 As Long, n As Long
+        
+        'No actualizar la pantalla, para ahorrar tiempo
+        Application.ScreenUpdating = False
+        
+        'Copia las filas de las hojas con nombre "Hoja1"
+        For Each Sh In ActiveWorkbook.Sheets
+            
+            'Solo cobminar las hojas si son "Hoja1"
+            If Sh.Name = "Hoja1" Then
+            
+                'Combinar las hojas
+                CombineSheets ThisWorkbook.Sheets(1), ActiveWorkbook.Sheets(Sh.Name)
+            End If
+        Next Sh
+        
+        'Cierre del archivo
+        Workbooks(Filename).Close
+        
+        'Archivo siguiente
+        Filename = Dir()
+    Loop
+    
+    'Restablece las alertas
+    Application.DisplayAlerts = True
+End Sub
+
+'Permite navegar hasta una carpeta en el disco
+Function GetFolder(strPath As String) As String
+    Dim fldr As FileDialog
+    Dim sItem As String
+    Set fldr = Application.FileDialog(msoFileDialogFolderPicker)
+    With fldr
+        .Title = "Select a Folder"
+        .AllowMultiSelect = False
+        .InitialFileName = strPath
+        If .Show <> -1 Then GoTo NextCode
+        sItem = .SelectedItems(1)
+    End With
+NextCode:
+    GetFolder = sItem
+    Set fldr = Nothing
+End Function
+
+'Combina las filas de dos hojas
+Sub CombineSheets(s1 As Worksheet, s2 As Worksheet)
+    
+    Dim n1 As Long, n2 As Long
+    n1 = s1.Range("B65536").End(xlUp).row
+    n2 = s2.Range("B65536").End(xlUp).row
+    OK = (n1 + n2 <= 65536)
+    If OK Then
+        With s2.Range(s2.Cells(3, 1), s2.Cells(n2, s2.UsedRange.Columns.Count))
+            .Copy s1.Range("A" & n1 + 1)
+        End With
+    End If
+    
+End Sub
+
+'Elimina hojas con datos parciales
+Sub EliminarHojas()
+    
+    'Iteración por todas las hojas
+    For Each Sheet In ActiveWorkbook.Sheets
+        
+        'Condición para eliminiar la hoja
+        If Sheet.Name <> "Total" Then
+            'Sheet.Visible = xlSheetHidden
+            
+            Sheet.Delete
+        End If
+    Next
+    
+    'Restablece las alertas
+    Application.DisplayAlerts = True
+End Sub
+
+'Pegar Valores
+Sub PegarValores()
+    Dim Sh As Worksheet
+    For Each Sh In ThisWorkbook.Worksheets
+        Sh.Activate
+        Sh.Cells.Copy
+        Sh.Range("A1").PasteSpecial Paste:=xlValues
+        Sh.Range("A1").Select
+    Next Sh
+    Application.CutCopyMode = False
+End Sub
+
+
+
+'Elimina las columnas marcadas en rojo y la primera (columna A)
+Sub EliminarColumnas()
+    
+    'Declaración de la variable tipo Worksheet
+    Dim ws As Worksheet
+    
+    'Seleccionar hoja actual
+    Set ws = Worksheets("Total")
+    
+    'Eliminar columnas D, G, I, J, M, N, O, P
+    ws.Range("A:A,D:D,G:G,I:I,J:J,M:M,N:N,O:O,P:P").EntireColumn.Delete
+   
+End Sub
+
+'Elimina filas basándose en el contenido de la columna "Inicio"
+'Se debe ejecutar DESPUÉS de EliminarColumnas()
+Sub EliminarFilas()
+
+    'Declaración de la variable tipo Worksheet
+    Dim ws As Worksheet
+    
+    'Seleccionar hoja actual
+    Set ws = Worksheets("Total")
+
+    'Consultar fecha de cierre
+    Dim dateString As String, TheDate As Date
+    
+    'Variable que determina si el texto ingresado es o no una fecha válida
+    Dim valid As Boolean: valid = True
+    
+    Do
+        'Se pide al usuario una fecha válida con formato dd/mm/aaa. Ej. 01/06/1994
+        dateString = Application.InputBox("Ingrese la fecha de corte (dd/mm/aaaa): ")
+        
+        'Si el texto ingresado es una fecha válida
+        If IsDate(dateString) Then
+        
+            'Guardar la fecha ingresada
+            TheDate = DateValue(dateString)
+            
+            'La fecha ingresada es válida
+            valid = True
+        
+        'Si el texto ingresado no es una fecha válida
+        Else
+            'La fecha es inválida.
+            MsgBox "Ingresó una fecha inválida. Por favor inténtelo de nuevo."
+            
+            'La fecha es inválida
+            valid = False
+        End If
+    
+    'Iterar hasta obtener una fecha válida
+    Loop Until valid = True
+    
+    'Eliminar filas anteriores a la fecha de cierre
+    ws.Range("F2").Select
+    
+    'Mientras la fila no esté vacía
+    Do While (Selection <> "")
+
+        'Si la fecha en la columna "Inicio" es anterior a la de corte
+        If (CDate(Selection.Value) <= CDate(dateString)) Then
+            
+            'Eliminar fila
+            Selection.EntireRow.Delete
+            
+        'Si la fecha en la columna "Inicio" NO es anterior a la de corte
+        Else
+        
+            'Seleccionar fila siguiente
+            Selection.Offset(1, 0).Select
+        End If
+    Loop
+    
+End Sub

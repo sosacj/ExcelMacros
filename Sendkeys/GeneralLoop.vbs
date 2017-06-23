@@ -3,7 +3,7 @@ shell.AppActivate("CONN")
 
 Dim index, count
 'Number of commands to execute
-count = 48
+count = 427
 For index = 1 To count
-	shell.SendKeys "{ENTER}a{ENTER}{DOWN}", True
+	shell.SendKeys "nn{ENTER}{DOWN}", True
 Next

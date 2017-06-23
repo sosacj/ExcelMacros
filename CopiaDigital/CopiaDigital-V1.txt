@@ -14,15 +14,12 @@ Sub CopiaDigital()
 	Application.CutCopyMode = False
 
 	'Borar filas y columnas vacías
-	For lp = 256 To 1 Step -1
-		If Columns(lp).EntireColumn.Hidden = True Then Columns(lp).EntireColumn.Delete Else
-	Next
-		For lp = 65536 To 1 Step -1
-		
-		If Rows(lp).EntireRow.Hidden = True Then
-			Rows(lp).EntireRow.Delete
-		Else
-	Next
+For lp = 256 To 1 Step -1
+If Columns(lp).EntireColumn.Hidden = True Then Columns(lp).EntireColumn.Delete Else
+Next
+For lp = 65536 To 1 Step -1
+If Rows(lp).EntireRow.Hidden = True Then Rows(lp).EntireRow.Delete Else
+Next
 
 	Dim PrintRange As Range
 	Dim Range_Top As Integer
