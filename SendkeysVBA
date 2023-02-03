@@ -1,0 +1,29 @@
+Public Declare PtrSafe Function SetCursorPos Lib "user32" (ByVal x As Long, ByVal y As Long) As Long
+Public Declare PtrSafe Sub mouse_event Lib "user32" (ByVal dwFlags As Long, ByVal dx As Long, ByVal dy As Long, ByVal cButtons As Long, ByVal dwExtraInfo As Long)
+Public Const MOUSEEVENTF_LEFTDOWN = &H2
+Public Const MOUSEEVENTF_LEFTUP = &H4
+Public Const MOUSEEVENTF_RIGHTDOWN As Long = &H8
+Public Const MOUSEEVENTF_RIGHTUP As Long = &H10
+
+Sub Makro1()
+'
+' Makro1 Makro
+'
+
+Application.Wait (Now + TimeValue("0:00:2"))
+
+         For x = 1 To 400 Step 1
+SetCursorPos 1462, 248 'x and y position
+  mouse_event MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0
+  mouse_event MOUSEEVENTF_LEFTUP, 0, 0, 0, 0
+  Application.Wait (Now + TimeValue("0:00:2"))
+  
+SetCursorPos 1398, 323 'x and y position
+  mouse_event MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0
+  mouse_event MOUSEEVENTF_LEFTUP, 0, 0, 0, 0
+  
+  Application.Wait (Now + TimeValue("0:00:3"))
+'
+         
+         Next x
+End Sub
